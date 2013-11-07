@@ -22,16 +22,16 @@ public class ArrayListBenchmark {
     @GenerateMicroBenchmark
     public void withInitialSize() {
         sizedList = new ArrayList<>(size);
-        for (int j = 0; j < size; j++) {
-            sizedList.add(j);
+        for (int i = 0; i < size; i++) {
+            sizedList.add(i);
         }
     }
 
     @GenerateMicroBenchmark
     public void withoutInitialSize() {
         defaultList = new ArrayList<>();
-        for (int j = 0; j < size; j++) {
-            defaultList.add(j);
+        for (int i = 0; i < size; i++) {
+            defaultList.add(i);
         }
     }
 }
