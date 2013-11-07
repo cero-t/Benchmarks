@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ArrayListBenchmark {
-    private static final int size = 100;
+    private static final int size = 1000000;
 
     @GenerateMicroBenchmark
     public void withInitialSize() {
