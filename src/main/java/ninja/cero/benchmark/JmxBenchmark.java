@@ -10,13 +10,8 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.TearDown;
 
-import javax.management.AttributeNotFoundException;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanException;
 import javax.management.MBeanServerConnection;
-import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
-import javax.management.ReflectionException;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
@@ -28,45 +23,45 @@ import java.lang.management.ThreadMXBean;
 @State(Scope.Benchmark)
 public class JmxBenchmark {
 
-    public static final String PID = "12345";
+    public static final String PID = "15484";
     static VirtualMachine vm;
     static JMXConnector connector;
     static ThreadMXBean threadMXBean;
     static long sum;
 
     @Benchmark
-    public void no1_vmAttach() throws IOException, AttachNotSupportedException {
+    public void no1_vmAttach() throws Exception {
         VirtualMachine vm = VirtualMachine.attach(PID);
         vm.getSystemProperties();
         vm.detach();
     }
 
     @Benchmark
-    public void no2_vmCachedGetProperties() throws IOException, AttachNotSupportedException {
+    public void no2_vmCachedGetProperties() throws Exception {
         vm.getSystemProperties();
     }
 
     @Benchmark
-    public void no3_vmCachedGetConnector() throws IOException, AttachNotSupportedException, AgentLoadException, AgentInitializationException {
+    public void no3_vmCachedGetConnector() throws Exception {
         JMXConnector jmxConnector = getJmxConnector();
         jmxConnector.close();
     }
 
     @Benchmark
-    public void no4_connectorCachedGetMBeanCount() throws IOException, AttachNotSupportedException, AgentLoadException, AgentInitializationException {
+    public void no4_connectorCachedGetMBeanCount() throws Exception {
         MBeanServerConnection connection = connector.getMBeanServerConnection();
         connection.getMBeanCount();
     }
 
     @Benchmark
-    public void no5_connectorCachedThreadCount() throws IOException, AttachNotSupportedException, AgentLoadException, AgentInitializationException, MalformedObjectNameException, AttributeNotFoundException, MBeanException, ReflectionException, InstanceNotFoundException {
+    public void no5_connectorCachedThreadCount() throws Exception {
         MBeanServerConnection connection = connector.getMBeanServerConnection();
         Object count = connection.getAttribute(new ObjectName(ManagementFactory.THREAD_MXBEAN_NAME), "ThreadCount");
         sum += (Integer) count;
     }
 
     @Benchmark
-    public void no6_connectorCachedGetThreadCount() throws IOException, AttachNotSupportedException, AgentLoadException, AgentInitializationException {
+    public void no6_connectorCachedGetThreadCount() throws Exception {
         MBeanServerConnection connection = connector.getMBeanServerConnection();
         ThreadMXBean threadBean = ManagementFactory.newPlatformMXBeanProxy(
                 connection, ManagementFactory.THREAD_MXBEAN_NAME, ThreadMXBean.class);
@@ -74,13 +69,13 @@ public class JmxBenchmark {
     }
 
     @Benchmark
-    public void no7_beanCachedGetThreadCount() throws IOException, AttachNotSupportedException, AgentLoadException, AgentInitializationException {
+    public void no7_beanCachedGetThreadCount() throws Exception {
         MBeanServerConnection connection = connector.getMBeanServerConnection();
         sum += threadMXBean.getThreadCount();
     }
 
     @Setup
-    public void setUp() throws IOException, AttachNotSupportedException, AgentLoadException, AgentInitializationException {
+    public void setUp() throws Exception {
         System.out.println("setUp");
         vm = VirtualMachine.attach(PID);
         connector = getJmxConnector();
@@ -88,7 +83,7 @@ public class JmxBenchmark {
     }
 
     @TearDown
-    public void tearDown() throws IOException {
+    public void tearDown() throws Exception {
         System.out.println("tearDown");
         if (connector != null) {
             connector.close();
