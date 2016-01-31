@@ -23,3 +23,14 @@ caching effects of VirutualMachine, JmxConnection and MXBean instances.
 |JmxBenchmark.no5_connectorCachedThreadCount|thrpt|10|8199.887|± 1269.164|ops/s|
 |JmxBenchmark.no6_connectorCachedGetThreadCount|thrpt|10|2662.147|± 585.627|ops/s|
 |JmxBenchmark.no7_beanCachedGetThreadCount|thrpt|10|8148.967|± 1705.518|ops/s|
+
+### Remarks:
+
+Results no1 and no2 show low through put which means
+attaching to vm by `VirtualMachine.attach(PID)`
+and getting connector by `JMXConnectorFactory.connect(serviceURL)` are expensive.
+These instances should be cached.
+
+Comparing no5 to no7, there is no remarkable difference which means
+getting information by `MBeanServerConnection.getAttribute` and `ThreadMXBean`
+spends same costs.
